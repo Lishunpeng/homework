@@ -58,7 +58,7 @@ header .left{background-image: url(../image/person.png);left: 16px;right: auto;}
 header .rightText{ left: auto;right: 16px;width: auto;top: 0;}
 header .rightText a{color: #fff;}
 header .right{background-image: url(../image/safeCenter.png);left: auto;right: 16px;}
-header .leftBack{left: 16px;right: auto;background-image:url(../../assets/image/back.png);width: 150px;background-size:30% 100%;padding-left: 15px;line-height: 48px;color: #fff;font-weight: normal;}
+header .leftBack{left: 16px;right: auto;background-image:url(../../assets/image/back.png);width: 150px;background-size:30% 100%;line-height: 48px;color: #fff;font-weight: normal;}
 header span:active{background-color:#8bc5f1;}
 /*弹框*/
 .mint-msgbox-btns{height: 90px;}

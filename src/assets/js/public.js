@@ -97,13 +97,10 @@ Vue.prototype.myfun = {
 		axios.get(this.myfun_ips + obj.path + _tokenStr + localStorage.token).then(res => {
 			$('.loadingBox').hide();
 			//验证码接口特别重写
-			if(obj.isVer) {
-				return callback(res);
-			}
 			if(res.status == 200) {
 				this.changeToken(res.data);
-				if(res.data.state == -1) {
-					if(res.data.content != null) {
+				if(res.data.state == 1) {
+					/*if(res.data.content != null) {
 						if(res.data.content.islogin == -1) {
 							this._mySelf.$router.push({path: '/login/login'});
 							return Toast({
@@ -112,12 +109,9 @@ Vue.prototype.myfun = {
 								duration: 1000
 							});
 						}
-					}
+					}*/
 					res.data.msg = res.data.msg ? res.data.msg : '错误';
 					Toast(res.data.msg);
-					if(res.data.msg.indexOf('请完善个人信息再填写简历'>=0) || res.data.msg.indexOf('请填写网站企业信息再发布招聘'>=0)){
-						return obj.that.isCompleteInfo = false;
-					}
 				} else if(res.data.state == 0) {
 					return callback(res.data);
 				}

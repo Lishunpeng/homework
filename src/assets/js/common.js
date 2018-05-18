@@ -3,8 +3,121 @@ import axios from 'axios'
 import {MessageBox,Toast,Indicator} from 'mint-ui';
 Vue.prototype.myfun = {
 //	myfun_ips: 'http://192.168.2.22:80',
-	myfun_ips: 'http://localhost:2002',
-	mySlideout:null,
+	myfun_ips: 'http://119.29.59.87:80',
+	$number:/^[0-9]\d*$/,//自然整数
+	changeToken: function(data) {
+		data.token ? localStorage.token = data.token : "";
+		console.log(localStorage.token);
+	},
+	/*obj=>path(地址) isUnchangeString(不修改字段提交) reWriteFn*/
+	postAxios: function(obj, data, callback) {
+//		$('.loadingBox').show();
+		this.showLoad();
+		if(obj.isUnchangeString) {
+			var strdata = data;
+		} else {
+			var strdata = "";
+			for(var i in data) {
+				strdata += i + '=' + data[i] + '&';
+			}
+		}
+		strdata = strdata.substr(0, strdata.length - 1);
+		axios.post(this.myfun_ips + obj.path + '?token=' + localStorage.token, strdata, {
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			}
+		}).then(res => {
+			this.closeLoad();
+			if(res.status == 200) {
+				this.changeToken(res.data);
+				if(obj.reWriteFn){
+					return callback(res);
+				}
+				if(res.data.state == -1) {
+					if(res.data.content != null) {
+						if(res.data.content.islogin == -1) {
+							return	this.toLogin();
+						}
+					}
+					res.data.msg = res.data.msg ? res.data.msg : '错误';
+					Toast(res.data.msg);
+				} else if(res.data.state == 0) {
+					return callback(res.data);
+				}
+			}
+		}).catch(res => {
+			var myErr = res.toString();
+			if(myErr.indexOf('Network Error') >= 0) {
+				MessageBox('提示', '服务器异常或者检查您的网络是否异常！');
+			}
+			this.closeLoad();
+			console.log(res);
+		});
+	},
+	post_imgAxios: function(obj, data, callback) {
+		console.log(data);
+		this.showLoad();
+		axios.post(this.myfun_ips + obj.path + '?token=' + localStorage.token, data, {
+			headers: {
+				'Content-Type': 'multipart/form-data'
+			}
+		}).then(res => {
+			this.closeLoad();
+			if(res.status == 200) {
+				this.changeToken(res.data);
+				if(res.data.state == -1) {
+					if(res.data.content != null) {
+						if(res.data.content.islogin == -1) {
+							return	this.toLogin();
+						}
+					}
+					Toast(res.data.msg);
+				} else if(res.data.state == 0) {
+					return callback(res.data);
+				}
+			}
+		}).catch(res => {
+			var myErr = res.toString();
+			if(myErr.indexOf('Network Error') >= 0) {
+				MessageBox('提示', '服务器异常或者检查您的网络是否异常！');
+			}
+			this.closeLoad();
+			console.log(res);
+		});
+	},
+/*obj=>path(地址) getMethod(判断是否头部带?参数拿数据) returnBack(返回上一页) that(当前vue对象this)*/
+	getAxios: function(obj, callback) {
+		this.showLoad();
+		var _tokenStr = obj.getMethod ? '?token=' : '&token=';
+		axios.get(this.myfun_ips + obj.path + _tokenStr + localStorage.token).then(res => {
+			this.closeLoad();
+			console.log(res);
+			if(res.status == 200) {
+				this.changeToken(res.data);
+				if(res.data.errcode == 1) {
+//					if(res.data.content != null) {
+//						if(res.data.content.islogin == -1) {
+//							return	this.toLogin();
+//						}
+//					}
+					
+					res.data.msg = res.data.msg ? res.data.msg : '错误';
+					Toast(res.data.msg);
+//					if(obj.returnBack){
+//						return	this._mySelf.$router.back(-1);
+//					}
+				} else if(res.data.errcode == 0) {
+					return callback(res.data);
+				}
+			}
+		}).catch(res => {
+			var myErr = res.toString();
+			if(myErr.indexOf('Network Error') >= 0) {
+				MessageBox('提示', '服务器异常或者检查您的网络是否异常！');
+			}
+			this.closeLoad();
+		});
+	},
 	getThis:function(obj){
 		this._mySelf = obj;
 	},

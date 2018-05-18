@@ -7,6 +7,14 @@
 		<div class="msg">
 			<p style="color: #ff0000;">提示：点击添加追加问题题目。</p>
 			<div class="Qheader">
+				<form>
+					<div class="Qimgbox"><span>上传封面图片：</span>
+						<div class="imgbox">
+							<!--<img src=""/>-->
+							<input type="file" name="verifright" accept="image/*"  @change="postImg($event)"/>
+						</div>
+					</div>
+				</form>	
 				<div class="Qtitle">
 					<div class="tips">题目：</div><div class="inputBox"><input type="text" placeholder="请填写问卷标题" v-model="Qtitle"/></div>
 				</div>
@@ -201,6 +209,12 @@
 	#index {
 		@color: #ff6000;
 		/*msg*/
+		.Qimgbox{margin-top: 20px;border-bottom: 2px solid #E1E1E1;height: auto;overflow:hidden;padding-bottom: 20px;
+			>span{display: block;float: left;width: 250px;height: 150px;line-height: 150px;}
+			.imgbox{position: relative;width: 150px;height: 150px;border: 2px solid #26A2FF;float: left;background: url(../../assets/image/addImg.png) no-repeat center; background-size: 70% 70%;
+				input{position: absolute;left: 0;top: 0;height: 100%;width: 100%;opacity: 0;}
+			}
+		}
 		.Qheader{height: auto;width: 100%;
 			>div{height: 90px;width: 100%;display: flex;border-bottom: 2px solid #E1E1E1;
 				.tips{flex: 2;text-align: center;line-height: 90px;}

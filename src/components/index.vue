@@ -66,6 +66,9 @@
 //			this.myfun.closeLoad();
 			this.$nextTick(() => {
 				this.myfun.sliderOut();
+				this.myfun.getAxios({path:'/admin/list',getMethod:true},res=>{
+					console.log(res);
+				});
 			});
 		},
 		methods: {

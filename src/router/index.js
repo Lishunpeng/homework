@@ -13,6 +13,7 @@ import collecting from '@/components/userCenter/collecting'
 import Qdetail from '@/components/Qdetail'
 import push from '@/components/userCenter/push'
 import pushList from '@/components/userCenter/pushList'
+import Qwrite from '@/components/Qwrite'
 Vue.use(Router)
 
 export default new Router({

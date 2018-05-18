@@ -9,7 +9,7 @@
 		<div class="msg">
 			<div class="inputBox"><span>用户名：</span><input type="text" placeholder="请输入用户名" v-model="loginUsername"/></div>
 			<div class="inputBox"><span>密&nbsp;&nbsp;&nbsp;&nbsp;码：</span><input type="password" placeholder="请输入密码"  v-model="loginPassword"/></div>
-			<span class="link"><router-link to="/login/forgetPsw">忘记密码?</router-link></span>
+			<!--<span class="link"><router-link to="/login/forgetPsw">忘记密码?</router-link></span>-->
 		</div>
 		
 		<div class="btn" @click="login">
@@ -43,13 +43,10 @@
  					'name':this.loginUsername,
  					'pwd':this.loginPassword
  				}
- 				var myobj = {path:'/app/login'};
-   				this.myfun.postAxios(myobj,postData,res=>{
-   					console.log(res);
-   					this.$router.push({path:'/user/userCenter'});
-   					localStorage.removeItem('userCenter');
-   					localStorage.code_ap = JSON.stringify(postData);
-   					return	Toast({message: '登录成功！',position: 'bottom',duration: 1000});
+ 				var myobj = {path:'/admin/login?username='+this.loginUsername+'&password='+this.loginPassword};
+   				this.myfun.getAxios(myobj,res=>{
+   					this.$router.push({path:'/'});
+   					return	Toast({message: res.msg,position: 'bottom',duration: 1000});
    				});
  			}
 		}
