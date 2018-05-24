@@ -144,7 +144,7 @@ body,html {width: 100%;height: 100%;}
 
 /*填充满屏*/
 #app,#index,#panel{height: 100%;position: relative;}
-
+.slideout-open, .slideout-open body, .slideout-open .slideout-panel{overflow-y: scroll;}
 /*重写sheet样式*/
 .mint-actionsheet-listitem, .mint-actionsheet-button{height: 70px;line-height: 70px;font-size: 30px;}
 

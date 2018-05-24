@@ -4,8 +4,10 @@
 				<div class="headPortrait">
 					<img src="../assets/image/myheader.jpg"/>
 				</div>
-				<div class="userName">用户名：测试名字1</div>
-				<button class="headBtn btn">注销账号</button>
+				<div class="userName">未登录</div>
+				<router-link to="/login/login">
+					<button class="headBtn btn">登录</button>
+				</router-link>
 			</div>
 			<ul class="personList">
 				<li v-for="data in listData">

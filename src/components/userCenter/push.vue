@@ -34,7 +34,7 @@
 			<div class="QBox">
 				<div v-for="(data,index) in addData">
 					<div class="Qjudey" v-if="data.type==1">
-						<div class="header"><span></span>判断题<i @click="myDelete(index)"></i></div>
+						<div class="header"><span class="judey"></span>判断题<i @click="myDelete(index)"></i></div>
 						<div class="title">
 							<input type="text"  value="" placeholder="请输入题目。" v-model="data.title"/>
 						</div>
@@ -44,8 +44,10 @@
 						</ul>-->
 						<!--<div class="complete" @click="complete(index)">完成</div>-->
 					</div>
-					<div class="Qchoose" v-else-if="data.type==0">
-						<div class="header"><span></span>选择题<i @click="myDelete(index)"></i></div>
+					<div class="Qchoose" v-else-if="data.type==0 || data.type==3">
+						<div class="header">
+							<span :class="data.type==0?'choose':'chooseMore'"></span>
+							{{data.type==0?'单选题':'多选题'}}<i @click="myDelete(index)"></i></div>
 						<div class="title">
 							<input type="text"  value="" placeholder="请输入题目。" v-model="data.title"/>
 						</div>
@@ -60,7 +62,7 @@
 						</ul>
 					</div>
 					<div class="Qchoose" v-else-if="data.type==2">
-						<div class="header"><span></span>填空题<i @click="myDelete(index)"></i></div>
+						<div class="header"><span class="write"></span>填空题<i @click="myDelete(index)"></i></div>
 						<div class="title">
 							<input type="text"  value="" placeholder="请输入题目。" v-model="data.title"/>
 						</div>
@@ -87,7 +89,7 @@
 			return {
 				isShowMask:false,
 				data: [{
-					name: '添加选择题目',
+					name: '添加单选题目',
 					method:()=>{this.choose(0)}
 				},
 				{
@@ -97,6 +99,10 @@
 				{
 					name: '添加填写题目',
 					method: ()=>{this.choose(2)}
+				},
+				{
+					name: '添加多选题目',
+					method: ()=>{this.choose(3)}
 				}
 				],
 				sheetVisible: false,
@@ -130,6 +136,8 @@
 					case 1:this.addData.push({type:1,title:''});
 						break;
 					case 2:this.addData.push({type:2,title:''});
+						break;	
+					case 3:this.addData.push({type:3,chooseData:[],title:''});	
 						break;	
 					default:
 						break;
@@ -191,7 +199,7 @@
 				}
 				var postData = {Qtitle:this.Qtitle,Qdetail:this.Qdetail,endTime:this.endTime,Qlist:this.addData};
 				
-				console.log(JSON.stringify(postData));
+				console.log(JSON.stringify(postData,null,'--'));
 			},
 			//时间选择器
 			handleChange(){
@@ -207,7 +215,7 @@
 
 <style lang="less" scoped="scoped">
 	#index {
-		@color: #ff6000;
+		@color: #ff6000;height: auto;overflow: auto;
 		/*msg*/
 		.Qimgbox{margin-top: 20px;border-bottom: 2px solid #E1E1E1;height: auto;overflow:hidden;padding-bottom: 20px;
 			>span{display: block;float: left;width: 250px;height: 150px;line-height: 150px;}
@@ -228,8 +236,12 @@
 				#public(){height: auto;margin-top: 20px;}
 				.Qjudey,.Qchoose{#public;
 					.header{border-bottom: 5px solid #26A2FF;color: #26A2FF;height: 80px;
-						#icon(){width: 60px;height: 60px;border-radius:50%;display: inline-block;position: relative;top: 10px;background:no-repeat #26A2FF center;background-size:80% 80%;}
-						span{#icon;margin-right: 20px;background-image:url(../../assets/image/judey.png);}
+						#icon(){width: 60px;height: 60px;border-radius:50%;display: inline-block;position: relative;top: 10px;background:no-repeat #26A2FF center;background-size:60% 60%;}
+						span{#icon;margin-right: 20px;}
+						span.judey{background-image:url(../../assets/image/judey.png);}
+						span.choose{background-image:url(../../assets/image/chooseIcon.png);}
+						span.chooseMore{background-image:url(../../assets/image/chooseMoreIcon.png);}
+						span.write{background-image:url(../../assets/image/writeIcon.png);}
 						i{#icon;background-image:url(../../assets/image/delete.png);float: right;background-color:transparent;
 							&:active{background-color: #E1E1E1;}
 						}

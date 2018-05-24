@@ -19,26 +19,30 @@
 				</div>
 				<ul :class="['list',isNews?'active':'']">
 					<li>
-						<div class="imgbox">
-							<img src="../assets/image/listImg.jpg"/>
-						</div>
-						<div class="text">
-							<div class="title lineBroke">1关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法</div>
-							<div class="detail lineBroke">1关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法</div>
-							<div class="time">创建时间：2017-01-01</div>
-						</div>
+						<router-link to="Qwrite">
+							<div class="imgbox">
+								<img src="../assets/image/listImg.jpg"/>
+							</div>
+							<div class="text">
+								<div class="title lineBroke">1关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法</div>
+								<div class="detail lineBroke">1关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法</div>
+								<div class="time">创建时间：2017-01-01</div>
+							</div>
+						</router-link>
 					</li>
 				</ul>
 				<ul :class="['list',!isNews?'active':'']">
 					<li>
-						<div class="imgbox">
-							<img src="../assets/image/listImg.jpg"/>
-						</div>
-						<div class="text">
-							<div class="title lineBroke">2关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法</div>
-							<div class="detail lineBroke">2关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法</div>
-							<div class="time">创建时间：2017-01-01</div>
-						</div>
+						<router-link to="Qdetail">
+							<div class="imgbox">
+								<img src="../assets/image/listImg.jpg"/>
+							</div>
+							<div class="text">
+								<div class="title lineBroke">2关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法</div>
+								<div class="detail lineBroke">2关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法</div>
+								<div class="time">创建时间：2017-01-01</div>
+							</div>
+						</router-link>
 					</li>
 				</ul>
 			</div>

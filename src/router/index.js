@@ -90,5 +90,12 @@ export default new Router({
 			name: 'pushList',
 			component: pushList,
 		},
+		//问卷发布列表
+		{
+			path: '/Qwrite',
+			name: 'Qwrite',
+			component: Qwrite,
+		},
+		
 	]
 })
