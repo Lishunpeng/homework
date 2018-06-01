@@ -13,35 +13,30 @@ Vue.prototype.myfun = {
 	postAxios: function(obj, data, callback) {
 //		$('.loadingBox').show();
 		this.showLoad();
-		if(obj.isUnchangeString) {
+		/*if(obj.isUnchangeString) {
 			var strdata = data;
 		} else {
 			var strdata = "";
 			for(var i in data) {
 				strdata += i + '=' + data[i] + '&';
 			}
-		}
-		strdata = strdata.substr(0, strdata.length - 1);
-		axios.post(this.myfun_ips + obj.path + '?token=' + localStorage.token, strdata, {
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded'
-			}
-		}).then(res => {
+		}*/
+		console.log(data);
+//		strdata = strdata.substr(0, strdata.length - 1);
+		axios.post(this.myfun_ips + obj.path + '?token=' + localStorage.token, data).then(res => {
 			this.closeLoad();
 			if(res.status == 200) {
 				this.changeToken(res.data);
 				if(obj.reWriteFn){
 					return callback(res);
 				}
-				if(res.data.state == -1) {
-					if(res.data.content != null) {
-						if(res.data.content.islogin == -1) {
-							return	this.toLogin();
-						}
-					}
+				if(res.data.state == 1) {
 					res.data.msg = res.data.msg ? res.data.msg : '错误';
 					Toast(res.data.msg);
-				} else if(res.data.state == 0) {
+				}else if(res.data.errcode == -1||res.data.errcode == -2){
+					return	this.toLogin();
+				}
+				else if(res.data.errcode == 0) {
 					return callback(res.data);
 				}
 			}
@@ -65,14 +60,12 @@ Vue.prototype.myfun = {
 			this.closeLoad();
 			if(res.status == 200) {
 				this.changeToken(res.data);
-				if(res.data.state == -1) {
-					if(res.data.content != null) {
-						if(res.data.content.islogin == -1) {
-							return	this.toLogin();
-						}
-					}
+				if(res.data.state == 1) {
+					res.data.msg = res.data.msg ? res.data.msg : '错误';
 					Toast(res.data.msg);
-				} else if(res.data.state == 0) {
+				}else if(res.data.errcode == -1||res.data.errcode == -2){
+					return	this.toLogin();
+				}else if(res.data.state == 0) {
 					return callback(res.data);
 				}
 			}
@@ -91,22 +84,18 @@ Vue.prototype.myfun = {
 		var _tokenStr = obj.getMethod ? '?token=' : '&token=';
 		axios.get(this.myfun_ips + obj.path + _tokenStr + localStorage.token).then(res => {
 			this.closeLoad();
-			console.log(res);
 			if(res.status == 200) {
 				this.changeToken(res.data);
 				if(res.data.errcode == 1) {
-//					if(res.data.content != null) {
-//						if(res.data.content.islogin == -1) {
-//							return	this.toLogin();
-//						}
-//					}
-					
 					res.data.msg = res.data.msg ? res.data.msg : '错误';
 					Toast(res.data.msg);
 //					if(obj.returnBack){
 //						return	this._mySelf.$router.back(-1);
 //					}
-				} else if(res.data.errcode == 0) {
+				}else if(res.data.errcode == -1||res.data.errcode == -2){
+					return	this.toLogin();
+				}
+				else if(res.data.errcode == 0) {
 					return callback(res.data);
 				}
 			}
@@ -153,6 +142,14 @@ Vue.prototype.myfun = {
 		obj.isShowMask = !obj.isShowMask;
 		this.mySlideout.toggle();
 	},
+	objToString:function(obj){
+		var strdata = '';
+		for(var i in obj) {
+			strdata += i + '=' + obj[i] + '&';
+		}
+		strdata = strdata.substr(0, strdata.length - 1);
+		return strdata;
+	},
 	//获取当前时间
     getMyDate:function(obj){
     	var _date = new Date(obj);  
@@ -163,5 +160,22 @@ Vue.prototype.myfun = {
 	    d<10?d='0'+d:'';
 	    var str = y+'-'+m+'-'+d;
 	    return str;
-    }
+    },
+    //自动登录
+    toLogin:function(){
+		this._mySelf.$router.push({path: '/login/login'});
+		Toast({
+			message: '你还未登录,请先登录!',
+			position: 'bottom',
+			duration: 1000
+		});
+	},
+    //时间戳转换成年月日
+	timestampToTime:function(timestamp) {
+        var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        var	Y = date.getFullYear() + '-';
+        var	M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+        var	D = date.getDate() + ' ';
+       	return Y+M+D;
+   	},
 }

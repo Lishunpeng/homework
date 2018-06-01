@@ -9,15 +9,15 @@
 			</header>
 			<div class="container">
 				<ul class='list'>
-					<li>
-						<router-link to="/Qdetail">
+					<li v-for="data in list">
+						<router-link :to="{path:'/Qdetail',query:{id:data._id,title:data.title,detail:data.detail,creatTime:data.createDate}}">
 							<div class="imgbox">
 								<img src="../../assets/image/listImg.jpg"/>
 							</div>
 							<div class="text">
-								<div class="title lineBroke">2关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法</div>
-								<div class="detail lineBroke">2关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法关于您对嘉应学院的看法</div>
-								<div class="time">创建时间：2017-01-01</div>
+								<div class="title lineBroke" v-text="data.title"></div>
+								<div class="detail lineBroke" v-text="data.detail"></div>
+								<div class="time">创建时间：{{data.createDate}}</div>
 							</div>
 						</router-link>
 					</li>
@@ -41,18 +41,23 @@
 			return {
 				isNews:true,
 				mySlideout:null,
-				isShowMask:false
+				isShowMask:false,
+				list:[]
 			}
 		},
 		components: {
 			myMenu
 		},
 		created() {
-//			this.myfun.showLoad();
-//			this.myfun.closeLoad();
+			this.myfun.getAxios({path:'/admin/questionList',getMethod:true},res=>{
+				console.log(res);
+				for (let i in res.list) {
+					res.list[i].createDate = this.myfun.timestampToTime(res.list[i].createDate);
+				}
+				this.list = res.list;
+			});
 			this.$nextTick(() => {
 				this.myfun.sliderOut();
-//				console.log(this.myfun.mySlideout);
 			});
 		},
 		methods: {

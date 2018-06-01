@@ -53,8 +53,8 @@
 						</div>
 						<ul class="QchooseContent">
 							<div class="add" @click="addChoose(index)"><span></span>添加选项</div>
-							<li v-for="(list,listIndex) in data.chooseData">
-								<span v-text="list.name"></span>
+							<li v-for="(list,listIndex) in data.answer">
+								<span v-text="chooseStr[list.value]"></span>
 								<input type="text" placeholder="请输入问题题目" v-model="list.title"/>
 								<i class="reduce" @click="deleteChoose(index,listIndex)"></i>
 							</li>
@@ -131,13 +131,13 @@
 			},
 			choose(val){
 				switch (val){
-					case 0:this.addData.push({type:0,chooseData:[],title:''});
+					case 0:this.addData.push({type:0,answer:[],title:''});
 						break;
 					case 1:this.addData.push({type:1,title:''});
 						break;
 					case 2:this.addData.push({type:2,title:''});
 						break;	
-					case 3:this.addData.push({type:3,chooseData:[],title:''});	
+					case 3:this.addData.push({type:3,answer:[],title:''});	
 						break;	
 					default:
 						break;
@@ -148,11 +148,11 @@
 			},
 			//添加选项
 			addChoose(val){
-				var dataLength = this.addData[val].chooseData.length;
+				var dataLength = this.addData[val].answer.length;
 				if(dataLength+1>this.chooseStr.length){
 					return MessageBox('提示','选项不能超过26个！');
 				}
-				this.addData[val].chooseData.push({name:this.chooseStr[dataLength],title:''});
+				this.addData[val].answer.push({value:dataLength,title:''});
 			},
 			//删除题目
 			myDelete(val){
@@ -167,9 +167,9 @@
 			deleteChoose(index,listIndex){
 				MessageBox.confirm('确定删除吗？', '提示').then(()=>{
 					Toast('删除成功！');
-					this.addData[index].chooseData.splice(listIndex,1);
-					for(let i in this.addData[index].chooseData){
-						this.addData[index].chooseData[i].name = this.chooseStr[i];
+					this.addData[index].answer.splice(listIndex,1);
+					for(let i in this.addData[index].answer){
+						this.addData[index].answer[i].value = this.chooseStr[i];
 					}
 				}).catch(()=>{
 					Toast('你取消了删除！');
@@ -186,20 +186,24 @@
 					if(!this.addData[i].title){
 						return MessageBox('提示','题目标题不能为空！');
 					}
-					else if(this.addData[i].type==0){
-						if(this.addData[i].chooseData.length==0){
+					else if(this.addData[i].type==0 || this.addData[i].type==3){
+						if(this.addData[i].answer.length==0){
 							return MessageBox('提示','选择题至少要有一个选项！');
 						}
-						for (let j in this.addData[i].chooseData) {
-							if(!this.addData[i].chooseData[j].title){
+						for (let j in this.addData[i].answer) {
+							if(!this.addData[i].answer[j].title){
 								return MessageBox('提示','选择题选项题目不能为空！');
 							}
 						}
 					}
 				}
-				var postData = {Qtitle:this.Qtitle,Qdetail:this.Qdetail,endTime:this.endTime,Qlist:this.addData};
-				
-				console.log(JSON.stringify(postData,null,'--'));
+				var postlist = {title:this.Qtitle,detail:this.Qdetail,endDate:this.endTime,opts:this.addData};
+				console.log(JSON.stringify(postlist,null,'--'));
+				this.myfun.postAxios({path:'/admin/addlist'},postlist,res=>{
+					MessageBox('提示',res.msg).then(()=>{
+						this.$router.back(-1);
+					});
+				})
 			},
 			//时间选择器
 			handleChange(){

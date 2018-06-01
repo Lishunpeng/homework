@@ -26,7 +26,7 @@
 						<span style="color: #FF0000;" v-text="'('+typeString[data.type]+')'"></span>&nbsp;&nbsp;{{index+1}}.{{data.title}}
 					</div>
 					<div class="answer" v-for="(answer,item) in data.answer"  v-if="data.type==0 || data.type==3">
-						<span :class="answer.myAnswer?'myAnswer':''">{{answerString[item]}}</span>{{answer.title}}
+						<span :class="answer.myAnswer?'myAnswer':''">{{answerString[data.value]}}</span>{{answer.title}}
 					</div>
 					<div v-if="data.type==1" class="answer judey">
 						<span :class="data.myAnswer?'myAnswer':''">√</span>是
@@ -47,26 +47,34 @@
 		name:'Qdetail',
 		data(){
 			return{
-				titleData:{title:'问卷题目',detail:'关于嘉应学院XXXXXXXXXXXX问题。',creatTime:'2018-01-01'},
+				titleData:{},
 //				answerList:[
 //					{title:'您觉得南区住的舒不舒服',type:0,answer:[{title:'舒服'},{title:'不舒服'},{title:'一般般'}]},
 //					{title:'您觉得学校老师教书质量如何',type:0,answer:[{title:'好'},{title:'特别好'},{title:'非常好'}]},
 //					{title:'您是否同意开发者帅',type:1},
 //					{title:'您是如何看待这款APP，请阐述您的意见（50个字左右）',type:2}
 //				],
-				answerList:[
+				/*answerList:[
 					{title:'您觉得南区住的舒不舒服',type:0,answer:[{title:'舒服',myAnswer:1},{title:'不舒服',myAnswer:0},{title:'一般般',myAnswer:0}]},
 					{title:'您觉得学校老师教书质量如何',type:0,answer:[{title:'好',myAnswer:1},{title:'特别好',myAnswer:0},{title:'非常好',myAnswer:0}]},
 					{title:'你喜欢吃饭堂什么菜',type:3,answer:[{title:'青菜',myAnswer:1},{title:'煎蛋',myAnswer:0},{title:'红豆炒绿豆',myAnswer:1},{title:'土豆炒马铃薯',myAnswer:1},{title:'番茄炒西红柿',myAnswer:1},{title:'百草枯炒砒霜',myAnswer:1}]},
 					{title:'您是否同意开发者帅',type:1,myAnswer:1},
 					{title:'您是如何看待这款APP，请阐述您的意见（50个字左右）',type:2,myAnswer:'n你猜我写可；安静的联发科就好啦是的开关就流口水的合格率'}
-				],
+				],*/
+				answerList:[],
 				answerString:'ABCDEFGHIJKLNMOPQRSTUVWXYZ',
 				typeString:['单选题','判断题','填空题','多选题'],
+				getId:'',
 			}
 		},
 		created(){
-			
+			this.getId = this.$route.query.id;
+			this.titleData.title = this.$route.query.title;
+			this.titleData.detail = this.$route.query.detail;
+			this.titleData.creatTime = this.$route.query.creatTime;
+			this.myfun.getAxios({path:'/admin/questionDetail?id='+this.getId},res=>{
+				this.answerList = res.opts;
+			})
 		},
 		methods:{
 			
