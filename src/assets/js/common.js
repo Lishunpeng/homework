@@ -122,7 +122,7 @@ Vue.prototype.myfun = {
 	},
 	//显示加载中
 	showLoad:function(){
-		Indicator.open({text: 'Loading...',spinnerType: 'fading-circle'});
+		Indicator.open({text: 'Loading...',spinnerType: 'snake'});
 	},
 	//关闭加载中
 	closeLoad:function(){

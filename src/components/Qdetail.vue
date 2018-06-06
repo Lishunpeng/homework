@@ -10,7 +10,7 @@
 				 {{titleData.detail}}
 				<p class="time" v-text="titleData.creatTime"></p>
 			</div>
-			<div class="tips">
+			<!--<div class="tips">
 				<div>
 					<span style="background: #26A2FF;"></span>
 					<p>代表你的选项</p>
@@ -19,18 +19,52 @@
 					<span style="background: #ccc;"></span>
 					<p>代表未作答</p>
 				</div>
-			</div>
+			</div>-->
 			<ul class="content">
 				<li v-for="(data,index) in answerList">
 					<div class="chooseTitle">
 						<span style="color: #FF0000;" v-text="'('+typeString[data.type]+')'"></span>&nbsp;&nbsp;{{index+1}}.{{data.title}}
 					</div>
 					<div class="answer" v-for="(answer,item) in data.answer"  v-if="data.type==0 || data.type==3">
-						<span :class="answer.myAnswer?'myAnswer':''">{{answerString[data.value]}}</span>{{answer.title}}
+						<span :class="answer.myAnswer?'myAnswer':''">{{answerString[answer.value]}}</span>{{answer.title}}
 					</div>
+					<div class="countBox" v-if="data.type==0 || data.type==3">
+						<div class="countHead">
+							<span class="icon"></span>
+							选项统计
+						</div>					
+						<div class="count" v-for="(answer,item) in data.answer"  >
+							<span>选项{{answerString[answer.value]}}：（{{answer.count}}票）</span>
+							<div>
+								<p></p>
+							</div>
+							<i>50%</i>
+						</div>
+					</div>
+					
 					<div v-if="data.type==1" class="answer judey">
-						<span :class="data.myAnswer?'myAnswer':''">√</span>是
-						<span :class="!data.myAnswer?'myAnswer':''">×</span>否
+						<!--<span :class="data.myAnswer?'myAnswer':''">√</span>是
+						<span :class="!data.myAnswer?'myAnswer':''">×</span>否-->
+					</div>
+					<div class="countBox" v-if="data.type==1">
+						<div class="countHead">
+							<span class="icon"></span>
+							判断统计
+						</div>					
+						<div class="count" >
+							<span>对√：（5票）</span>
+							<div>
+								<p></p>
+							</div>
+							<i>50%</i>
+						</div>
+						<div class="count" >
+							<span>错×：（5票）</span>
+							<div>
+								<p></p>
+							</div>
+							<i>50%</i>
+						</div>
 					</div>
 					<div v-if="data.type==2" class="answer write">
 						<textarea name="" rows="" cols="" readonly="readonly" :value="data.myAnswer"></textarea>
@@ -73,6 +107,7 @@
 			this.titleData.detail = this.$route.query.detail;
 			this.titleData.creatTime = this.$route.query.creatTime;
 			this.myfun.getAxios({path:'/admin/questionDetail?id='+this.getId},res=>{
+				console.log(res);
 				this.answerList = res.opts;
 			})
 		},
@@ -92,7 +127,7 @@
 				}
 			}
 			padding: 10px 20px;height:auto;
-			.title{font-size: 35px;font-weight: bold;color: #26A2FF;line-height: 50px;height: auto;}
+			.title{font-size: 35px;font-weight: bold;color: #26A2FF;line-height: 50px;height: auto;text-align: center;}
 			.detail{font-size: 30px;color: #1b1b1b;line-height: 35px;height: auto;margin-top: 10px;padding-top:10px;border-top:2px dashed #E1E1E1 ;
 				.time{text-align: right;color: #999999;}
 			}
@@ -103,6 +138,17 @@
 					.answer span.myAnswer{background: #26A2FF;}
 					.judey span+span{margin-left: 100px;}
 					.write textarea{height: auto;min-height: 120px;width: 100%;border: 3px solid #e1e1e1;padding: 20px;line-height: 50px;}
+					.countBox{height: auto;position:relative;padding-bottom: 15px;}
+					.count{height: 50px;width: 100%;display: flex;margin-top: 15px;
+						span{color: #666666;font-size: 27px;line-height: 50px;display: block;flex: 3;}
+						>div{flex: 6;background: #E1E1E1;height: 30px;margin-top: 10px;border-radius:30px;
+							p{height: 100%;width: 10%;border-radius:30px;background: #26A2FF;}
+						}
+						i{flex: 1;display: block;line-height: 50px;font-size: 27px;color: #217EC3;text-align: center;}
+					}
+					.countHead{border-bottom: 2px solid #217EC3;color: #217EC3;font-size: 30px;font-weight: bold;padding-left: 50px;height: 50px;line-height: 50px;
+						span{background: url(../assets/image/countIcon.png);width: 40px;height: 40px;position:absolute;background-size:100% 100%;left: 0px;top: 3px;}
+					}
 				}
 			}
 		}
