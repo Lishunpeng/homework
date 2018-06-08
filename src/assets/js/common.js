@@ -30,6 +30,7 @@ Vue.prototype.myfun = {
 				if(obj.reWriteFn){
 					return callback(res);
 				}
+				return console.log(res);
 				if(res.data.state == 1) {
 					res.data.msg = res.data.msg ? res.data.msg : '错误';
 					Toast(res.data.msg);
@@ -170,6 +171,16 @@ Vue.prototype.myfun = {
 			duration: 1000
 		});
 	},
+	timeToTimestamp:function(time){
+// 		console.log(time);
+		if(time){
+			var timestamp = new Date(time.replace(/-/g, '/'));			
+		}else{
+			var timestamp = new Date();	
+		}
+   		timestamp = Date.parse(timestamp);
+   		return timestamp;
+   	},
     //时间戳转换成年月日
 	timestampToTime:function(timestamp) {
         var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000

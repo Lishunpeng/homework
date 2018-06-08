@@ -3,6 +3,7 @@
 		<header>
 			<span class="leftBack" @click="$router.back(-1)">返回</span>
 			问卷详情
+			<span class="rightText" @click="save">保存</span>
 		</header>
 		<div class="container">
 			<div class="title" v-text="titleData.title"></div>
@@ -29,8 +30,8 @@
 						<span :class="answer.myAnswer?'myAnswer':''">{{answerString[item]}}</span>{{answer.title}}
 					</div>
 					<div v-if="data.type==1" class="answer judey">
-						<span :class="data.myAnswer==1?'myAnswer':''" @click="chooseJudey(index,1)">√</span>是
-						<span :class="!data.myAnswer?'myAnswer':''" @click="chooseJudey(index,0)">×</span>否
+						<span :class="data.myAnswer==1&&data.myAnswer!=-1?'myAnswer':''" @click="chooseJudey(index,1)">√</span>是
+						<span :class="data.myAnswer==0&&data.myAnswer!=-1?'myAnswer':''" @click="chooseJudey(index,0)">×</span>否
 					</div>
 					<div v-if="data.type==2" class="answer write">
 						<textarea name="" rows="" cols="" v-model="data.myAnswer"></textarea>
@@ -43,30 +44,49 @@
 </template>
 
 <script>
+	import {MessageBox,Toast} from 'mint-ui';
 	export default{
 		name:'Qdetail',
 		data(){
 			return{
-				titleData:{title:'问卷题目',detail:'关于嘉应学院XXXXXXXXXXXX问题。',creatTime:'2018-01-01'},
+				titleData:{},
 //				answerList:[
 //					{title:'您觉得南区住的舒不舒服',type:0,answer:[{title:'舒服'},{title:'不舒服'},{title:'一般般'}]},
 //					{title:'您觉得学校老师教书质量如何',type:0,answer:[{title:'好'},{title:'特别好'},{title:'非常好'}]},
 //					{title:'您是否同意开发者帅',type:1},
 //					{title:'您是如何看待这款APP，请阐述您的意见（50个字左右）',type:2}
 //				],
-				answerList:[
-					{title:'您觉得南区住的舒不舒服',type:0,answer:[{title:'舒服',myAnswer:0},{title:'不舒服',myAnswer:0},{title:'一般般',myAnswer:0}]},
-					{title:'您觉得学校老师教书质量如何',type:0,answer:[{title:'好',myAnswer:0},{title:'特别好',myAnswer:0},{title:'非常好',myAnswer:0}]},
-					{title:'你喜欢吃饭堂什么菜',type:3,answer:[{title:'青菜',myAnswer:0},{title:'煎蛋',myAnswer:0},{title:'红豆炒绿豆',myAnswer:0},{title:'土豆炒马铃薯',myAnswer:0},{title:'番茄炒西红柿',myAnswer:0},{title:'百草枯炒砒霜',myAnswer:0}]},
-					{title:'您是否同意开发者帅',type:1,myAnswer:-1},
-					{title:'您是如何看待这款APP，请阐述您的意见（50个字左右）',type:2,myAnswer:''}
-				],
+//				answerList:[
+//					{title:'您觉得南区住的舒不舒服',type:0,answer:[{title:'舒服',myAnswer:0},{title:'不舒服',myAnswer:0},{title:'一般般',myAnswer:0}]},
+//					{title:'您觉得学校老师教书质量如何',type:0,answer:[{title:'好',myAnswer:0},{title:'特别好',myAnswer:0},{title:'非常好',myAnswer:0}]},
+//					{title:'你喜欢吃饭堂什么菜',type:3,answer:[{title:'青菜',myAnswer:0},{title:'煎蛋',myAnswer:0},{title:'红豆炒绿豆',myAnswer:0},{title:'土豆炒马铃薯',myAnswer:0},{title:'番茄炒西红柿',myAnswer:0},{title:'百草枯炒砒霜',myAnswer:0}]},
+//					{title:'您是否同意开发者帅',type:1,myAnswer:-1},
+//					{title:'您是如何看待这款APP，请阐述您的意见（50个字左右）',type:2,myAnswer:''}
+//				],
+				answerList:[],
 				answerString:'ABCDEFGHIJKLNMOPQRSTUVWXYZ',
 				typeString:['选择题','判断题','填空题','多选题'],
+				getId:''
 			}
 		},
 		created(){
-			
+			this.getId = this.$route.query.id;
+			this.titleData.title = this.$route.query.title;
+			this.titleData.detail = this.$route.query.detail;
+			this.titleData.creatTime = this.$route.query.creatTime;
+			this.myfun.getAxios({path:'/admin/questionDetail?id='+this.getId},res=>{
+				console.log(res);
+				for (let i in res.opts) {
+					for (let j in res.opts[i].answer) {
+						res.opts[i].answer[j].myAnswer = 0;
+					}
+					if(res.opts[i].type==1){
+						res.opts[i].myAnswer = -1;
+					}
+				}
+				
+				this.answerList = res.opts;
+			})
 		},
 		methods:{
 			//多选题题选中选项
@@ -83,8 +103,58 @@
 			chooseJudey(index,val){
 				console.log(index)
 				this.answerList[index].myAnswer = val;
+			},
+			//保存
+			save(){
+				let postData = [];
+				for (let i in this.answerList) {
+					let obj = {};
+					if(this.answerList[i].type==0){
+						if(!this.answerList[i].answer.length){
+							return Toast('信息未填写完全！');
+						}
+						for (let j in this.answerList[i].answer) {
+							if(this.answerList[i].answer[j].myAnswer){
+								obj = {type:this.answerList[i].type,id:this.answerList[i]['_id'],value: this.answerList[i].answer[j].value};				
+							}
+						}
+					}
+					else if(this.answerList[i].type==1){
+						if(this.answerList[i].myAnswer==-1){
+							return Toast('信息未填写完全！');
+						}
+						obj = {type:this.answerList[i].type,id:this.answerList[i]['_id'],value: this.answerList[i].myAnswer};
+					}
+					else if(this.answerList[i].type==2){
+						if(!this.answerList[i].myAnswer){
+							return Toast('信息未填写完全！');
+						}
+						obj = {type:this.answerList[i].type,id:this.answerList[i]['_id'],value: 'testUsername:'+this.answerList[i].myAnswer}
+					}
+					else if(this.answerList[i].type==3){
+						let myArray = [];
+						for (let j in this.answerList[i].answer) {
+							this.answerList[i].answer[j].myAnswer?myArray.push(this.answerList[i].answer[j].value):'';						
+						}
+						if(!myArray.length){
+							return Toast('信息未填写完全！');
+						}
+						obj = {type:this.answerList[i].type,id:this.answerList[i]['_id'],value:myArray};
+					}
+					postData.push(obj);
+				}
+				
+				let postObj = {
+					qid:this.getId,
+					opts:postData
+				}
+				this.myfun.postAxios({path:'/admin/choose'},postObj,res=>{
+					console.log(res);
+					MessageBox('提示',res.msg).then(()=>{
+						this.$router.back(-1);
+					});
+				})
 			}
-			//
 		}
 	}
 </script>
