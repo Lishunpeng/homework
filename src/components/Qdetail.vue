@@ -36,9 +36,9 @@
 						<div class="count" v-for="(answer,item) in data.answer"  >
 							<span>选项{{answerString[answer.value]}}：（{{answer.count}}票）</span>
 							<div>
-								<p></p>
+								<p :style="{width:answer.areaCount*100+'%'}"></p>
 							</div>
-							<i>50%</i>
+							<i>{{answer.areaCount*100}}%</i>
 						</div>
 					</div>
 					
@@ -51,25 +51,18 @@
 							<span class="icon"></span>
 							判断统计
 						</div>					
-						<div class="count" >
-							<span>对√：（5票）</span>
+						<div class="count" v-for="answer in data.answer">
+							<span>{{answer.title}}√：（{{answer.count}}票）</span>
 							<div>
-								<p></p>
+								<p :style="{width:answer.areaCount*100+'%'}"></p>
 							</div>
-							<i>50%</i>
-						</div>
-						<div class="count" >
-							<span>错×：（5票）</span>
-							<div>
-								<p></p>
-							</div>
-							<i>50%</i>
+							<i>{{answer.areaCount*100}}%</i>
 						</div>
 					</div>
 					<div v-if="data.type==2" class="answer write">
-						<textarea name="" rows="" cols="" readonly="readonly" :value="data.myAnswer"></textarea>
+						<p v-for="item in data.content" v-text="item"></p>
 					</div>
-					
+					 
 				</li>
 			</ul>
 		</div>
@@ -106,8 +99,24 @@
 			this.titleData.title = this.$route.query.title;
 			this.titleData.detail = this.$route.query.detail;
 			this.titleData.creatTime = this.$route.query.creatTime;
-			this.myfun.getAxios({path:'/admin/questionDetail?id='+this.getId},res=>{
-				console.log(res);
+			this.myfun.getAxios({path:'/admin/questionDetail?id='+this.getId,reWrite:true},res=>{
+				console.log(res.opts,'errcode');
+				for (let i in res.opts) {
+					console.log(111);
+					if(res.opts[i].answer.length){
+						var allSum = 0;
+						for (let j in res.opts[i].answer) {
+							allSum+=res.opts[i].answer[j].count;
+						}
+						for (let k in res.opts[i].answer) {
+							
+							allSum?res.opts[i].answer[k].areaCount = (res.opts[i].answer[k].count/allSum):res.opts[i].answer[k].areaCount=0;
+							res.opts[i].answer[k].areaCount = res.opts[i].answer[k].areaCount.toFixed(3);
+							console.log(res.opts[i].answer[k].areaCount,'res.opts[i].answer[k].areaCount');
+						}
+					}
+				}
+				console.log(res.opts,'res.opts');
 				this.answerList = res.opts;
 			})
 		},
@@ -136,11 +145,12 @@
 					.chooseTitle{font-size: 32px;color: #1b1b1b;line-height: 30px;height: auto;}
 					.answer{span{color: #fff;display: inline-block;width: 50px;height: 50px;background: #e1e1e1;border-radius:50px;text-align: center;line-height: 50px;margin-right: 20px;}margin: 20px 0;height: auto;}					
 					.answer span.myAnswer{background: #26A2FF;}
+					.answer>p{word-break: break-word;margin: 10px 0;color: #666666;}
 					.judey span+span{margin-left: 100px;}
 					.write textarea{height: auto;min-height: 120px;width: 100%;border: 3px solid #e1e1e1;padding: 20px;line-height: 50px;}
 					.countBox{height: auto;position:relative;padding-bottom: 15px;}
 					.count{height: 50px;width: 100%;display: flex;margin-top: 15px;
-						span{color: #666666;font-size: 27px;line-height: 50px;display: block;flex: 3;}
+						span{color: #666666;font-size: 27px;line-height: 50px;display: block;flex:4;}
 						>div{flex: 6;background: #E1E1E1;height: 30px;margin-top: 10px;border-radius:30px;
 							p{height: 100%;width: 10%;border-radius:30px;background: #26A2FF;}
 						}

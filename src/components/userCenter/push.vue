@@ -7,14 +7,14 @@
 		<div class="msg">
 			<p style="color: #ff0000;">提示：点击添加追加问题题目。</p>
 			<div class="Qheader">
-				<form>
+				<!--<form>
 					<div class="Qimgbox"><span>上传封面图片：</span>
 						<div class="imgbox">
-							<!--<img src=""/>-->
+							<img src=""/>
 							<input type="file" name="verifright" accept="image/*"  @change="postImg($event)"/>
 						</div>
 					</div>
-				</form>	
+				</form>	-->
 				<div class="Qtitle">
 					<div class="tips">题目：</div><div class="inputBox"><input type="text" placeholder="请填写问卷标题" v-model="Qtitle"/></div>
 				</div>
@@ -133,7 +133,7 @@
 				switch (val){
 					case 0:this.addData.push({type:0,answer:[],title:''});
 						break;
-					case 1:this.addData.push({type:1,title:''});
+					case 1:this.addData.push({type:1,title:'',answer:[{type:1,'title':'对的'},{type:0,'title':'错的'}]});
 						break;
 					case 2:this.addData.push({type:2,title:''});
 						break;	
@@ -169,7 +169,7 @@
 					Toast('删除成功！');
 					this.addData[index].answer.splice(listIndex,1);
 					for(let i in this.addData[index].answer){
-						this.addData[index].answer[i].value = this.chooseStr[i];
+						this.addData[index].answer[i].value = i;
 					}
 				}).catch(()=>{
 					Toast('你取消了删除！');
@@ -213,6 +213,17 @@
 			myshow(id){
 				this.$refs.picker.open();
 			},
+			postImg(event,val){
+ 				var hasFiles = event.target.files[0];
+ 				if(hasFiles.size>1000000){
+ 					return MessageBox('提示','图片过大，请重新上传！');
+ 				}
+				let name = hasFiles.name;
+				let type = hasFiles.type;
+				this.myfun.selectFileImage(hasFiles,res=>{
+					this.myfun.saveImgDB(res);
+   				});
+ 			}
 		}
 	}
 </script>

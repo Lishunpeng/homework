@@ -8,12 +8,13 @@
 				账户中心
 			</header>
 			<div class="msg">
-				<router-link :to="{path:'editUserName'}">
-					<div class="inputBox"><span>用户名称：</span>
-						<p v-text="'测试'"></p><i></i>
+				<!--<router-link :to="{path:'editUserName'}">-->
+					<div class="inputBox"><span>用户名：</span>
+						<p v-text="userName"></p>
+						<!--<i></i>-->
 					</div>
-				</router-link>	
-				<router-link to='changePsw'><div class="inputBox"><span>更改密码：</span><p></p><i></i></div></router-link>
+				<!--</router-link>-->	
+				<!--<router-link to='changePsw'><div class="inputBox"><span>更改密码：</span><p></p><i></i></div></router-link>-->
 			</div>
 			<div class="btn">
 				注销
@@ -29,13 +30,17 @@
   		name: 'login',
   		data(){
   			return{
-  				isShowMask:false
+  				isShowMask:false,
+  				userName:''
   			}
   		},
   		components: {
 			myMenu
 		},
   		created(){
+  			this.myfun.getAxios({path:'/admin/userinfo',getMethod:true},res=>{
+				this.userName = res.authInfo.data.username;
+			})
 			this.$nextTick(() => {
 				this.myfun.sliderOut();
 			});
@@ -55,7 +60,7 @@
         .msg{
             .inputBox{
             	border-bottom: 1px solid #e1e1e1;
-                padding-left:30px;
+                padding:0 30px;
                 height: 90px;
                 width: 100%;
                 display: flex;

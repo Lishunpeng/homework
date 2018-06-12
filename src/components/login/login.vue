@@ -3,7 +3,9 @@
 		<header>
 			<!--<span class="leftBack" @click="$router.back(-1)">返回</span>-->
 			登录
-			<span class="rightText"><router-link to="/login/register">注册</router-link></span>
+			<span class="rightText">
+				<router-link to="/login/register">注册</router-link>
+			</span>
 		</header>
 		
 		<div class="msg">

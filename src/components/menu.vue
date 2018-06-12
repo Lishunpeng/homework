@@ -2,11 +2,13 @@
 		<nav id="menu">
 			<div class="headerBox">
 				<div class="headPortrait">
-					<img src="../assets/image/myheader.jpg"/>
+					<input type="file" @change="postImg($event)"/>
+					<img :src="imgData?imgData:'./static/myheader.jpg'"/>
 				</div>
-				<div class="userName">未登录</div>
+				<p style="color: #FF0000;text-align: center;">点击图片上传头像</p>
+				<div class="userName" v-text="userName?userName:'未登录'">未登录</div>
 				<router-link to="/login/login">
-					<button class="headBtn btn">登录</button>
+					<button class="headBtn btn" v-text="userName?'注销':'登录'" @click="removeToken">注销</button>
 				</router-link>
 			</div>
 			<ul class="personList">
@@ -21,6 +23,7 @@
 </template>
 
 <script>
+	import {MessageBox,Toast} from 'mint-ui';
 	export default{
 		data(){
 			return{
@@ -29,12 +32,35 @@
 					{myClass:'account',title:'账户',toLink:'/safeInfo/safeCenter'},
 					{myClass:'participate',title:'参与',toLink:'/userCenter/myParticipate'},
 					{myClass:'myPush',title:'发布',toLink:'/userCenter/pushList'},
-					{myClass:'collect',title:'收藏',toLink:'/userCenter/collecting'},
-				]
+//					{myClass:'collect',title:'收藏',toLink:'/userCenter/collecting'},
+				],
+				imgData:'',
+				userName:''
 			}
 		},
 		created(){
+			this.myfun.selectImgDB(this);
+			this.myfun.getAxios({path:'/admin/userinfo',getMethod:true},res=>{
+				this.userName = res.authInfo.data.username;
+				localStorage.userName = this.userName;
+			})
 //			this.footData =	this.myfun.getFootData(this.myNumber);
+		},
+		methods:{
+			postImg(event,val){
+ 				var hasFiles = event.target.files[0];
+ 				if(hasFiles.size>1000000){
+ 					return MessageBox('提示','图片过大，请重新上传！');
+ 				}
+				let name = hasFiles.name;
+				let type = hasFiles.type;
+				this.myfun.selectFileImage(hasFiles,res=>{
+					this.myfun.saveImgDB(res,this);
+   				});
+ 			},
+ 			removeToken(){
+ 				localStorage.token = '';
+ 			}
 		}
 	}
 </script>
@@ -42,11 +68,13 @@
 <style scoped="scoped" lang="less">
 #menu{height: 100%;position: fixed;z-index: 1;width: 70%;left: 0;top: 0;
 	.headerBox{height: 400px;background: #455058;position: relative;width: 100%;overflow: hidden;
-		.headPortrait{max-height: 220px;height: auto;width: 160px;margin: 20px auto;position: relative;overflow: hidden;
-			img{width: 100%;}
+		p{font-size: 24px;}
+		.headPortrait{max-height: 220px;min-height:150px;height: auto;width: 160px;margin: 20px auto;position: relative;overflow: hidden;margin-bottom: 0;background: transparent;
+			img{width: 100%;z-index: 1;}
+			input{position: absolute;left: 0;top: 0;width: 100%;height: 100%;opacity: 0;z-index: 10;}
 		}
 		.userName{color: #fff;text-align: center;}
-		.headBtn{transition: all .3s;color: #E1E1E1;width: auto;height: auto;background: #666;margin: 20px auto;outline: none;border: 2px solid #E1E1E1;padding: 20px;line-height: normal;display: block;
+		.headBtn{transition: all .3s;color: #E1E1E1;width: auto;height: auto;background: #666;margin: 20px auto;outline: none;border: 2px solid #E1E1E1;font-size: 27px;padding: 10px 20px;line-height: normal;display: block;
 			&:active{background: #333;}
 		}
 	}

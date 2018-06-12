@@ -129,7 +129,7 @@
 						if(!this.answerList[i].myAnswer){
 							return Toast('信息未填写完全！');
 						}
-						obj = {type:this.answerList[i].type,id:this.answerList[i]['_id'],value: 'testUsername:'+this.answerList[i].myAnswer}
+						obj = {type:this.answerList[i].type,id:this.answerList[i]['_id'],content: localStorage.userName+':'+this.answerList[i].myAnswer}
 					}
 					else if(this.answerList[i].type==3){
 						let myArray = [];
@@ -148,6 +148,7 @@
 					qid:this.getId,
 					opts:postData
 				}
+				console.log(postObj);
 				this.myfun.postAxios({path:'/admin/choose'},postObj,res=>{
 					console.log(res);
 					MessageBox('提示',res.msg).then(()=>{

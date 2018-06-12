@@ -20,6 +20,9 @@
 		},
 		created() {
 			this.myfun.getThis(this);
+			if(!localStorage.token){
+				this.myfun.toLogin();
+			}
 		}
 	}
 </script>
